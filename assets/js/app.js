@@ -2,7 +2,7 @@ var topics = ["German Sherperd","Weiner Dog","Newfoundland","Golden Retriever","
 
 function display() {
     var topics = $(this).attr("data-name");
-    var query = "https://api.giphy.com/v1/gifs/search?q=" + topics + "&api_key=NdUWPxxRgRJ2VIj4ePyzF2csiixs8G2Xlimit=10";
+    var query = "https://api.giphy.com/v1/gifs/search?q=" + topics + "&api_key=NdUWPxxRgRJ2VIj4ePyzF2csiixs8G2X";
 
     $.ajax({url: query, method: "GET"}).done(function(response) {
         $(".gif").empty();
