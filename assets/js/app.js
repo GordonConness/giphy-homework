@@ -1,36 +1,76 @@
-var topics = ["German Sherperd","Weiner Dog","Newfoundland","Golden Retriever","Pug"]
+$(document).ready(function() {
+
+var topics = ["German Sherperd","Weiner Dog","Newfoundland","Golden Retriever","Pug"];
+var dog;
+
+function renderButtons() {
+    $(".button").empty();
+    for (let i=0; i < topics.length; i++) {
+      let addButton = $('<button>');
+      addButton.addClass("dogs");
+      addButton.attr("data-name", topics[i]);
+      addButton.text(topics[i]);
+  
+      $(".button").append(addButton);
+    }
+    $(".dogs").on("click", function () {
+        dog = $(this).attr("data-name");
+        display()
+    })
+
+    }
+  
+  
+  $(".add-gif").on("click", function(event){
+      event.preventDefault();
+      var gifs = $(".gif-name").val().trim();
+      topics.push(gifs);
+      $(".gif-name").val("");
+      renderButtons();
+  });
+  renderButtons();
 
 function display() {
-    var topics = $(this).attr("data-name");
-    var query = "https://api.giphy.com/v1/gifs/search?q=" + topics + "&api_key=NdUWPxxRgRJ2VIj4ePyzF2csiixs8G2X";
+    var query = "https://api.giphy.com/v1/gifs/search?q=" + dog + "&limit=10&rating=g&api_key=Y9GKQbgmCdbHfTHgL9d779rpOqggkkHU";
 
-    $.ajax({url: query, method: "GET"}).done(function(response) {
-        $(".gif").empty();
-
+    $.ajax({url: query, method: "GET"}).then(function(response) {
+        console.log(response);
         for (let i=0; i < response.data.length; i++) {
-            var gifDiv =$('<div class="gifDiv"');
+            var gifDiv =$('<div>');
             gifDiv.addClass("gifDiv");
             var rating = response.data[i].rating;
-            rating.addClass("rating");
+            var p = $("<p>")
+            p.text("rating" + rating);
             var animated = response.data[i].images.fixed_height.url;
-            animated.addClass("animated");
             var still = response.data[i].images.fixed_height_still.url;
-            still.addClass("still");
-            var gif = $('<img class="gifImage">');
+            var gif = $('<img>');
+            gif.addClass("gifImage");
 
-            gif.attr('src','still')
-            gif.attr('data-still', 'still')
-            gif.attr('data-animate', 'animated');
+            gif.attr('src', still);
+            gif.attr('data-still', still);
+            gif.attr('data-animate', animated);
             gif.attr('data-state','still');
 
             gifDiv.append(rating);
             gifDiv.prepend(gif);
-            $('gifHere').prepend(gifDiv);
-            
+            $('.gifHere').prepend(gifDiv);
         }
     })
 };
 
-$('gifHere').on("click",".gifImage", function() {
+$(".gifImage").on("click", function() {
+
+    var state = $(this).attr('data-state');
+    
+    if (state == 'still') {
+        $(this).attr('src', $(this).data('data-animated'));
+        $(this).attr('data-state', 'animated');}
+    else {
+        $(this).attr('src', $(this).data('data-still'));
+        $(this).attr('data-state', 'still');
+    }
+});
+
+$(document).on("click", "dogs", display);
 
 });
